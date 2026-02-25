@@ -1,0 +1,8 @@
+{
+  "aboutInfo": {
+    "name": "DevToolkit",
+    "version": "1.0.0",
+    "description": "A collection of offline developer tools in a single application.",
+    "builtWith": "Electron, React, TypeScript & Tailwind CSS"
+  }
+}
