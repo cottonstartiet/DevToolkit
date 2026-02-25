@@ -81,56 +81,51 @@ export function JsonComparePage() {
   }
 
   return (
-    <div className="max-w-5xl mx-auto">
-      <div className="mb-6">
+    <div className="flex flex-col h-full">
+      <div className="mb-4 shrink-0">
         <h1 className="text-2xl font-bold mb-1">JSON Compare</h1>
         <p className="text-muted-foreground">Compare two JSON objects and see the differences.</p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
-        <Card>
-          <CardHeader>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 min-h-0">
+        <Card className="flex flex-col">
+          <CardHeader className="shrink-0">
             <CardTitle className="text-base">Left JSON</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="flex-1 min-h-0 flex flex-col">
             <Textarea
               placeholder="Paste first JSON here..."
               value={left}
               onChange={(e) => setLeft(e.target.value)}
-              className="min-h-[250px] resize-none"
+              className="flex-1 min-h-0 resize-none"
             />
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
+        <Card className="flex flex-col">
+          <CardHeader className="shrink-0">
             <CardTitle className="text-base">Right JSON</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="flex-1 min-h-0 flex flex-col">
             <Textarea
               placeholder="Paste second JSON here..."
               value={right}
               onChange={(e) => setRight(e.target.value)}
-              className="min-h-[250px] resize-none"
+              className="flex-1 min-h-0 resize-none"
             />
           </CardContent>
         </Card>
       </div>
 
-      <Button onClick={compare} className="mb-4">
-        <GitCompare className="h-4 w-4 mr-2" />
-        Compare
-      </Button>
-
       {error && (
-        <div className="flex items-start gap-2 p-3 rounded-md bg-destructive/10 text-destructive text-sm mb-4">
+        <div className="flex items-start gap-2 p-3 rounded-md bg-destructive/10 text-destructive text-sm mt-4 shrink-0">
           <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />
           <span>{error}</span>
         </div>
       )}
 
       {diffs !== null && (
-        <Card>
+        <Card className="mt-4 shrink-0 max-h-48 overflow-y-auto">
           <CardHeader>
             <CardTitle className="text-base">
               {diffs.length === 0 ? "✓ No differences found" : `${diffs.length} difference(s) found`}
@@ -174,6 +169,13 @@ export function JsonComparePage() {
           )}
         </Card>
       )}
+
+      <div className="flex items-center gap-4 mt-4 shrink-0 pt-2">
+        <Button onClick={compare}>
+          <GitCompare className="h-4 w-4 mr-2" />
+          Compare
+        </Button>
+      </div>
     </div>
   )
 }

@@ -98,42 +98,42 @@ console.log(greeting);
   }
 
   return (
-    <div className="max-w-5xl mx-auto">
-      <div className="mb-6">
+    <div className="flex flex-col h-full">
+      <div className="mb-4 shrink-0">
         <h1 className="text-2xl font-bold mb-1">Markdown to PDF</h1>
         <p className="text-muted-foreground">Write Markdown and export as PDF using the print dialog.</p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <Card>
-          <CardHeader>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 min-h-0">
+        <Card className="flex flex-col">
+          <CardHeader className="shrink-0">
             <CardTitle className="text-base">Markdown Input</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="flex-1 min-h-0 flex flex-col">
             <Textarea
               value={markdown}
               onChange={(e) => setMarkdown(e.target.value)}
-              className="min-h-[400px] resize-none"
+              className="flex-1 min-h-0 resize-none"
               placeholder="Write your Markdown here..."
             />
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
+        <Card className="flex flex-col">
+          <CardHeader className="shrink-0">
             <CardTitle className="text-base">Preview</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="flex-1 min-h-0 flex flex-col">
             <div
               ref={previewRef}
-              className="prose prose-invert min-h-[400px] max-h-[400px] overflow-y-auto p-4 rounded-md border border-input bg-muted/50 text-sm [&_h1]:text-xl [&_h1]:font-bold [&_h1]:mb-3 [&_h1]:border-b [&_h1]:border-border [&_h1]:pb-2 [&_h2]:text-lg [&_h2]:font-semibold [&_h2]:mb-2 [&_h3]:text-base [&_h3]:font-semibold [&_h3]:mb-2 [&_code]:bg-muted [&_code]:px-1 [&_code]:rounded [&_pre]:bg-muted [&_pre]:p-3 [&_pre]:rounded-md [&_pre]:overflow-x-auto [&_blockquote]:border-l-2 [&_blockquote]:border-muted-foreground [&_blockquote]:pl-3 [&_blockquote]:text-muted-foreground [&_ul]:list-disc [&_ul]:pl-5 [&_hr]:border-border [&_hr]:my-4 [&_strong]:font-bold [&_em]:italic [&_a]:text-primary [&_a]:underline"
+              className="prose prose-invert flex-1 min-h-0 overflow-y-auto p-4 rounded-md border border-input bg-muted/50 text-sm [&_h1]:text-xl [&_h1]:font-bold [&_h1]:mb-3 [&_h1]:border-b [&_h1]:border-border [&_h1]:pb-2 [&_h2]:text-lg [&_h2]:font-semibold [&_h2]:mb-2 [&_h3]:text-base [&_h3]:font-semibold [&_h3]:mb-2 [&_code]:bg-muted [&_code]:px-1 [&_code]:rounded [&_pre]:bg-muted [&_pre]:p-3 [&_pre]:rounded-md [&_pre]:overflow-x-auto [&_blockquote]:border-l-2 [&_blockquote]:border-muted-foreground [&_blockquote]:pl-3 [&_blockquote]:text-muted-foreground [&_ul]:list-disc [&_ul]:pl-5 [&_hr]:border-border [&_hr]:my-4 [&_strong]:font-bold [&_em]:italic [&_a]:text-primary [&_a]:underline"
               dangerouslySetInnerHTML={{ __html: preview || "<p class='text-muted-foreground'>Click Preview to see rendered Markdown</p>" }}
             />
           </CardContent>
         </Card>
       </div>
 
-      <div className="flex gap-4 mt-4">
+      <div className="flex gap-4 mt-4 shrink-0 pt-2">
         <Button variant="secondary" onClick={handlePreview}>
           <Eye className="h-4 w-4 mr-2" />
           Preview

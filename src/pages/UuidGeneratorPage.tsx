@@ -45,13 +45,13 @@ export function UuidGeneratorPage() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <div className="mb-6">
+    <div className="flex flex-col h-full">
+      <div className="mb-4 shrink-0">
         <h1 className="text-2xl font-bold mb-1">GUID / UUID Generator</h1>
         <p className="text-muted-foreground">Generate random UUIDs (v4) for development use.</p>
       </div>
 
-      <Card className="mb-6">
+      <Card className="mb-4 shrink-0">
         <CardHeader>
           <CardTitle className="text-base">Options</CardTitle>
           <CardDescription>Customize UUID generation</CardDescription>
@@ -96,8 +96,8 @@ export function UuidGeneratorPage() {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
+      <Card className="flex-1 min-h-0 flex flex-col">
+        <CardHeader className="shrink-0">
           <div className="flex items-center justify-between">
             <CardTitle className="text-base">Results</CardTitle>
             <div className="flex gap-2">
@@ -112,7 +112,7 @@ export function UuidGeneratorPage() {
             </div>
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="flex-1 min-h-0 overflow-y-auto">
           <div className="space-y-2">
             {uuids.map((uuid, i) => (
               <div

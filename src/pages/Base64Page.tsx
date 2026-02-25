@@ -40,31 +40,31 @@ export function Base64Page() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <div className="mb-6">
+    <div className="flex flex-col h-full">
+      <div className="mb-4 shrink-0">
         <h1 className="text-2xl font-bold mb-1">Base64 Encoder / Decoder</h1>
         <p className="text-muted-foreground">Encode text to Base64 or decode Base64 strings.</p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <Card>
-          <CardHeader>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 min-h-0">
+        <Card className="flex flex-col">
+          <CardHeader className="shrink-0">
             <CardTitle className="text-base">
               {mode === "encode" ? "Plain Text" : "Base64 Input"}
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="flex-1 min-h-0 flex flex-col">
             <Textarea
               placeholder={mode === "encode" ? "Enter text to encode..." : "Enter Base64 to decode..."}
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              className="min-h-[300px] resize-none"
+              className="flex-1 min-h-0 resize-none"
             />
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
+        <Card className="flex flex-col">
+          <CardHeader className="shrink-0">
             <div className="flex items-center justify-between">
               <CardTitle className="text-base">
                 {mode === "encode" ? "Base64 Output" : "Decoded Text"}
@@ -77,7 +77,7 @@ export function Base64Page() {
               )}
             </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="flex-1 min-h-0 flex flex-col">
             {error ? (
               <div className="p-3 rounded-md bg-destructive/10 text-destructive text-sm">{error}</div>
             ) : (
@@ -85,14 +85,14 @@ export function Base64Page() {
                 value={output}
                 readOnly
                 placeholder="Result will appear here..."
-                className="min-h-[300px] resize-none"
+                className="flex-1 min-h-0 resize-none"
               />
             )}
           </CardContent>
         </Card>
       </div>
 
-      <div className="flex items-center gap-4 mt-4">
+      <div className="flex items-center gap-4 mt-4 shrink-0 pt-2">
         <Button onClick={process}>
           {mode === "encode" ? "Encode" : "Decode"}
         </Button>
