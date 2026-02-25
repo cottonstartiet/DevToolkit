@@ -22,3 +22,11 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
   // You can expose other APTs you need here.
   // ...
 })
+
+contextBridge.exposeInMainWorld('electronAPI', {
+  settings: {
+    get: (key: string): Promise<string | null> => ipcRenderer.invoke('settings:get', key),
+    set: (key: string, value: string): Promise<void> => ipcRenderer.invoke('settings:set', key, value),
+    getAll: (): Promise<Record<string, string>> => ipcRenderer.invoke('settings:getAll'),
+  },
+})
