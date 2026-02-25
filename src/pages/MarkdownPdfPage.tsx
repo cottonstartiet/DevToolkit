@@ -3,41 +3,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Textarea } from "@/components/ui/textarea"
 import { FileDown, Eye } from "lucide-react"
-
-// Simple Markdown to HTML converter (works offline)
-function markdownToHtml(md: string): string {
-  let html = md
-    // Code blocks
-    .replace(/```(\w*)\n([\s\S]*?)```/g, '<pre><code class="language-$1">$2</code></pre>')
-    // Inline code
-    .replace(/`([^`]+)`/g, "<code>$1</code>")
-    // Headers
-    .replace(/^### (.+)$/gm, "<h3>$1</h3>")
-    .replace(/^## (.+)$/gm, "<h2>$1</h2>")
-    .replace(/^# (.+)$/gm, "<h1>$1</h1>")
-    // Bold & Italic
-    .replace(/\*\*\*(.+?)\*\*\*/g, "<strong><em>$1</em></strong>")
-    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
-    .replace(/\*(.+?)\*/g, "<em>$1</em>")
-    // Blockquote
-    .replace(/^> (.+)$/gm, "<blockquote>$1</blockquote>")
-    // Unordered list
-    .replace(/^[-*] (.+)$/gm, "<li>$1</li>")
-    // Horizontal rule
-    .replace(/^---$/gm, "<hr/>")
-    // Links
-    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>')
-    // Line breaks / paragraphs
-    .replace(/\n\n/g, "</p><p>")
-    .replace(/\n/g, "<br/>")
-
-  // Wrap list items
-  html = html.replace(/(<li>.*<\/li>)/gs, "<ul>$1</ul>")
-  // Wrap in paragraphs
-  html = `<p>${html}</p>`
-
-  return html
-}
+import { MarkdownRenderer, markdownToHtml } from "@/lib/markdown"
 
 export function MarkdownPdfPage() {
   const [markdown, setMarkdown] = useState(`# Hello World
@@ -61,11 +27,11 @@ console.log(greeting);
 
 *Italic text* and **bold text** and ***bold italic text***.
 `)
-  const [preview, setPreview] = useState("")
+  const [showPreview, setShowPreview] = useState(false)
   const previewRef = useRef<HTMLDivElement>(null)
 
   const handlePreview = () => {
-    setPreview(markdownToHtml(markdown))
+    setShowPreview(true)
   }
 
   const handleDownloadPdf = () => {
@@ -127,8 +93,13 @@ console.log(greeting);
             <div
               ref={previewRef}
               className="prose prose-invert flex-1 min-h-0 overflow-y-auto p-4 rounded-md border border-input bg-muted/50 text-sm [&_h1]:text-xl [&_h1]:font-bold [&_h1]:mb-3 [&_h1]:border-b [&_h1]:border-border [&_h1]:pb-2 [&_h2]:text-lg [&_h2]:font-semibold [&_h2]:mb-2 [&_h3]:text-base [&_h3]:font-semibold [&_h3]:mb-2 [&_code]:bg-muted [&_code]:px-1 [&_code]:rounded [&_pre]:bg-muted [&_pre]:p-3 [&_pre]:rounded-md [&_pre]:overflow-x-auto [&_blockquote]:border-l-2 [&_blockquote]:border-muted-foreground [&_blockquote]:pl-3 [&_blockquote]:text-muted-foreground [&_ul]:list-disc [&_ul]:pl-5 [&_hr]:border-border [&_hr]:my-4 [&_strong]:font-bold [&_em]:italic [&_a]:text-primary [&_a]:underline"
-              dangerouslySetInnerHTML={{ __html: preview || "<p class='text-muted-foreground'>Click Preview to see rendered Markdown</p>" }}
-            />
+            >
+              {showPreview ? (
+                <MarkdownRenderer content={markdown} />
+              ) : (
+                <p className="text-muted-foreground">Click Preview to see rendered Markdown</p>
+              )}
+            </div>
           </CardContent>
         </Card>
       </div>
