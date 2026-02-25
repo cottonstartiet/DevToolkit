@@ -8,6 +8,7 @@ import { Base64Page } from "./pages/Base64Page"
 import { MarkdownPdfPage } from "./pages/MarkdownPdfPage"
 import { YamlJsonPage } from "./pages/YamlJsonPage"
 import { JwtDecoderPage } from "./pages/JwtDecoderPage"
+import { RegexTesterPage } from "./pages/RegexTesterPage"
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           <Route path="/markdown-pdf" element={<MarkdownPdfPage />} />
           <Route path="/yaml-json" element={<YamlJsonPage />} />
           <Route path="/jwt-decoder" element={<JwtDecoderPage />} />
+          <Route path="/regex-tester" element={<RegexTesterPage />} />
         </Route>
       </Routes>
     </HashRouter>

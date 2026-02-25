@@ -30,5 +30,10 @@ interface Window {
       set: (key: string, value: string) => Promise<void>
       getAll: () => Promise<Record<string, string>>
     }
+    favourites: {
+      getAll: () => Promise<string[]>
+      add: (toolPath: string) => Promise<void>
+      remove: (toolPath: string) => Promise<void>
+    }
   }
 }

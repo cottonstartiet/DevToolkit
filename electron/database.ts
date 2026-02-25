@@ -22,6 +22,12 @@ export function initDatabase(): void {
     )
   `)
 
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS favourites (
+      tool_path TEXT PRIMARY KEY
+    )
+  `)
+
   // Seed default settings for any keys that don't exist yet
   const upsert = db.prepare(
     'INSERT OR IGNORE INTO settings (key, value) VALUES (?, ?)'
@@ -53,6 +59,19 @@ export function getAllSettings(): Record<string, string> {
     value: string
   }[]
   return Object.fromEntries(rows.map((r) => [r.key, r.value]))
+}
+
+export function getFavourites(): string[] {
+  const rows = db.prepare('SELECT tool_path FROM favourites').all() as { tool_path: string }[]
+  return rows.map((r) => r.tool_path)
+}
+
+export function addFavourite(toolPath: string): void {
+  db.prepare('INSERT OR IGNORE INTO favourites (tool_path) VALUES (?)').run(toolPath)
+}
+
+export function removeFavourite(toolPath: string): void {
+  db.prepare('DELETE FROM favourites WHERE tool_path = ?').run(toolPath)
 }
 
 export function closeDatabase(): void {

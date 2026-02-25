@@ -21,12 +21,15 @@ import {
   Sparkles,
   Database,
   KeyRound,
+  Regex,
+  Star,
   type LucideIcon,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { useTheme } from "@/contexts/ThemeContext"
+import { useFavourites } from "@/contexts/FavouritesContext"
 import appConfig from "@/applicationConfig.json"
 
 interface Tool {
@@ -58,6 +61,13 @@ const categories: ToolCategory[] = [
     ],
   },
   {
+    name: "Text & String Tools",
+    icon: Regex,
+    tools: [
+      { name: "Regex Tester", path: "/regex-tester", icon: Regex },
+    ],
+  },
+  {
     name: "Data & Formats",
     icon: Database,
     tools: [
@@ -84,10 +94,15 @@ export function Sidebar() {
     return localStorage.getItem(STORAGE_KEY_COLLAPSED) === "true"
   })
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(() => {
-    return new Set(categories.map((c) => c.name))
+    return new Set([...categories.map((c) => c.name), "__favourites__"])
   })
   const { theme, setTheme } = useTheme()
+  const { favourites, toggleFavourite, isFavourite } = useFavourites()
   const location = useLocation()
+
+  // Build flat lookup of all tools by path
+  const allTools = categories.flatMap((c) => c.tools)
+  const favouriteTools = allTools.filter((t) => favourites.has(t.path))
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY_COLLAPSED, String(collapsed))
@@ -173,6 +188,69 @@ export function Sidebar() {
           </div>
 
           {/* Categories */}
+          {favouriteTools.length > 0 && (
+            <div className={cn("mt-1", collapsed ? "px-1.5" : "px-3")}>
+              {collapsed ? (
+                <div className="space-y-1">
+                  {favouriteTools.map((tool) => (
+                    <NavLink
+                      key={`fav-${tool.path}`}
+                      to={tool.path}
+                      title={tool.name}
+                      className={({ isActive }) =>
+                        cn(
+                          "flex items-center justify-center rounded-lg py-2 text-sm transition-colors",
+                          isActive
+                            ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+                            : "text-muted-foreground hover:text-sidebar-foreground hover:bg-sidebar-accent/50"
+                        )
+                      }
+                    >
+                      <Star className="h-4 w-4 shrink-0 fill-yellow-500 text-yellow-500" />
+                    </NavLink>
+                  ))}
+                </div>
+              ) : (
+                <>
+                  <button
+                    onClick={() => toggleCategory("__favourites__")}
+                    className="flex items-center justify-between w-full rounded-lg px-2 py-1.5 text-xs font-semibold text-muted-foreground uppercase tracking-wider hover:text-sidebar-foreground transition-colors cursor-pointer"
+                  >
+                    <span>Favourites</span>
+                    {expandedCategories.has("__favourites__") ? (
+                      <ChevronDown className="h-3 w-3" />
+                    ) : (
+                      <ChevronRight className="h-3 w-3" />
+                    )}
+                  </button>
+                  {expandedCategories.has("__favourites__") && (
+                    <ul className="space-y-1 mt-1">
+                      {favouriteTools.map((tool) => (
+                        <li key={`fav-${tool.path}`}>
+                          <NavLink
+                            to={tool.path}
+                            className={({ isActive }) =>
+                              cn(
+                                "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors",
+                                isActive
+                                  ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+                                  : "text-muted-foreground hover:text-sidebar-foreground hover:bg-sidebar-accent/50"
+                              )
+                            }
+                          >
+                            <tool.icon className="h-4 w-4 shrink-0" />
+                            <span className="flex-1">{tool.name}</span>
+                            <Star className="h-3.5 w-3.5 shrink-0 fill-yellow-500 text-yellow-500" />
+                          </NavLink>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </>
+              )}
+            </div>
+          )}
+
           {categories.map((category) => (
             <div key={category.name} className={cn("mt-1", collapsed ? "px-1.5" : "px-3")}>
               {collapsed ? (
@@ -214,20 +292,37 @@ export function Sidebar() {
                     <ul className="space-y-1 mt-1">
                       {category.tools.map((tool) => (
                         <li key={tool.path}>
-                          <NavLink
-                            to={tool.path}
-                            className={({ isActive }) =>
-                              cn(
-                                "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors",
-                                isActive
-                                  ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
-                                  : "text-muted-foreground hover:text-sidebar-foreground hover:bg-sidebar-accent/50"
-                              )
-                            }
-                          >
-                            <tool.icon className="h-4 w-4 shrink-0" />
-                            <span>{tool.name}</span>
-                          </NavLink>
+                          <div className="flex items-center group">
+                            <NavLink
+                              to={tool.path}
+                              className={({ isActive }) =>
+                                cn(
+                                  "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors flex-1 min-w-0",
+                                  isActive
+                                    ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+                                    : "text-muted-foreground hover:text-sidebar-foreground hover:bg-sidebar-accent/50"
+                                )
+                              }
+                            >
+                              <tool.icon className="h-4 w-4 shrink-0" />
+                              <span className="truncate">{tool.name}</span>
+                            </NavLink>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                toggleFavourite(tool.path)
+                              }}
+                              title={isFavourite(tool.path) ? "Remove from favourites" : "Add to favourites"}
+                              className={cn(
+                                "shrink-0 p-1 rounded transition-colors mr-1 cursor-pointer",
+                                isFavourite(tool.path)
+                                  ? "text-yellow-500"
+                                  : "text-muted-foreground/0 group-hover:text-muted-foreground hover:text-yellow-500"
+                              )}
+                            >
+                              <Star className={cn("h-3.5 w-3.5", isFavourite(tool.path) && "fill-yellow-500")} />
+                            </button>
+                          </div>
                         </li>
                       ))}
                     </ul>

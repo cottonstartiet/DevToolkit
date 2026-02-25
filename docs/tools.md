@@ -2,6 +2,10 @@
 
 Additional developer tools to add to DevToolkit. All tools are fully offline-capable and fit the existing single-page-per-tool architecture.
 
+## ⭐ Favourites
+
+Users can mark any tool as a favourite by clicking the star icon in the sidebar or on the home page. Favourite tools are persisted in SQLite and appear in a dedicated "Favourites" section at the top of the sidebar. The home page shows favourite tools when at least one is set, or all tools otherwise.
+
 ## ✨ Generators
 
 | Tool                    | What it does                                                        |
@@ -23,7 +27,7 @@ Additional developer tools to add to DevToolkit. All tools are fully offline-cap
 
 | Tool                    | What it does                                                        |
 | ----------------------- | ------------------------------------------------------------------- |
-| Regex Tester            | Write regex, test against input, see matches + capture groups live  |
+| ✅ Regex Tester          | Write regex, test against input, see matches + capture groups live (already built) |
 | String Case Converter   | camelCase ↔ snake_case ↔ PascalCase ↔ kebab-case ↔ CONSTANT_CASE   |
 | Lorem Ipsum Generator   | Generate placeholder text (words, sentences, paragraphs)            |
 | Text Diff               | Side-by-side or inline diff of any two text blocks                  |

@@ -1,7 +1,7 @@
 import { app, BrowserWindow, ipcMain } from 'electron'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
-import { initDatabase, getSetting, setSetting, getAllSettings, closeDatabase } from './database'
+import { initDatabase, getSetting, setSetting, getAllSettings, getFavourites, addFavourite, removeFavourite, closeDatabase } from './database'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 // The built directory structure
@@ -73,6 +73,10 @@ app.whenReady().then(() => {
   ipcMain.handle('settings:get', (_event, key: string) => getSetting(key))
   ipcMain.handle('settings:set', (_event, key: string, value: string) => setSetting(key, value))
   ipcMain.handle('settings:getAll', () => getAllSettings())
+
+  ipcMain.handle('favourites:getAll', () => getFavourites())
+  ipcMain.handle('favourites:add', (_event, toolPath: string) => addFavourite(toolPath))
+  ipcMain.handle('favourites:remove', (_event, toolPath: string) => removeFavourite(toolPath))
 
   createWindow()
 })
