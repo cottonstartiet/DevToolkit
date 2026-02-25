@@ -36,15 +36,8 @@ function createWindow() {
     },
   })
 
-  win.webContents.openDevTools()
-
   win.webContents.on('did-finish-load', () => {
     win?.webContents.send('main-process-message', (new Date).toLocaleString())
-  })
-
-  // Prevent window from closing on renderer crash
-  win.webContents.on('render-process-gone', (_event, details) => {
-    console.error('Renderer process gone:', details.reason)
   })
 
   if (VITE_DEV_SERVER_URL) {
