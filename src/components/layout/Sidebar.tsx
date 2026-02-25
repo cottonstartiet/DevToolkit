@@ -1,10 +1,11 @@
-import { useState } from "react"
-import { NavLink } from "react-router-dom"
+import { useState, useEffect } from "react"
+import { NavLink, useLocation } from "react-router-dom"
 import {
   Hash,
   Braces,
   ArrowLeftRight,
   GitCompare,
+  FileCode,
   FileText,
   Home,
   Wrench,
@@ -13,35 +14,58 @@ import {
   Sun,
   Moon,
   Monitor,
+  PanelLeftClose,
+  PanelLeftOpen,
+  ChevronDown,
+  ChevronRight,
+  Sparkles,
+  Database,
+  type LucideIcon,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { useTheme } from "@/contexts/ThemeContext"
-import aboutContent from "@/about.md?raw"
+import appConfig from "@/applicationConfig.json"
 
-const tools = [
-  { name: "Home", path: "/", icon: Home },
-  { name: "GUID / UUID Generator", path: "/uuid", icon: Hash },
-  { name: "JSON Formatter", path: "/json-formatter", icon: Braces },
-  { name: "JSON Compare", path: "/json-compare", icon: GitCompare },
-  { name: "Base64 Encoder/Decoder", path: "/base64", icon: ArrowLeftRight },
-  { name: "Markdown to PDF", path: "/markdown-pdf", icon: FileText },
-]
-
-function parseAboutInfo(md: string) {
-  const nameMatch = md.match(/^#\s+(.+)$/m)
-  const versionMatch = md.match(/\*\*Version:\*\*\s*(.+)$/m)
-  const descMatch = md.match(/^(?!#|\*\*)(.{10,})$/m)
-  return {
-    name: nameMatch?.[1]?.trim() ?? "DevToolkit",
-    version: versionMatch?.[1]?.trim() ?? "0.0.0",
-    description: descMatch?.[1]?.trim() ?? "",
-    raw: md,
-  }
+interface Tool {
+  name: string
+  path: string
+  icon: LucideIcon
 }
 
-const aboutInfo = parseAboutInfo(aboutContent)
+interface ToolCategory {
+  name: string
+  icon: LucideIcon
+  tools: Tool[]
+}
+
+const categories: ToolCategory[] = [
+  {
+    name: "Generators",
+    icon: Sparkles,
+    tools: [
+      { name: "GUID / UUID Generator", path: "/uuid", icon: Hash },
+    ],
+  },
+  {
+    name: "Encoding & Conversion",
+    icon: ArrowLeftRight,
+    tools: [
+      { name: "Base64 Encoder/Decoder", path: "/base64", icon: ArrowLeftRight },
+    ],
+  },
+  {
+    name: "Data & Formats",
+    icon: Database,
+    tools: [
+      { name: "JSON Formatter", path: "/json-formatter", icon: Braces },
+      { name: "JSON Compare", path: "/json-compare", icon: GitCompare },
+      { name: "YAML ↔ JSON", path: "/yaml-json", icon: FileCode },
+      { name: "Markdown to PDF", path: "/markdown-pdf", icon: FileText },
+    ],
+  },
+]
 
 const themeOptions = [
   { value: "light" as const, label: "Light", icon: Sun },
@@ -49,67 +73,225 @@ const themeOptions = [
   { value: "system" as const, label: "System", icon: Monitor },
 ]
 
+const STORAGE_KEY_COLLAPSED = "devtoolkit-sidebar-collapsed"
+
 export function Sidebar() {
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [aboutOpen, setAboutOpen] = useState(false)
+  const [collapsed, setCollapsed] = useState(() => {
+    return localStorage.getItem(STORAGE_KEY_COLLAPSED) === "true"
+  })
+  const [expandedCategories, setExpandedCategories] = useState<Set<string>>(() => {
+    return new Set(categories.map((c) => c.name))
+  })
   const { theme, setTheme } = useTheme()
+  const location = useLocation()
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY_COLLAPSED, String(collapsed))
+  }, [collapsed])
+
+  // Auto-expand the category containing the active route
+  useEffect(() => {
+    for (const cat of categories) {
+      if (cat.tools.some((t) => t.path === location.pathname)) {
+        setExpandedCategories((prev) => new Set(prev).add(cat.name))
+        break
+      }
+    }
+  }, [location.pathname])
+
+  function toggleCategory(name: string) {
+    setExpandedCategories((prev) => {
+      const next = new Set(prev)
+      if (next.has(name)) next.delete(name)
+      else next.add(name)
+      return next
+    })
+  }
 
   return (
     <>
-      <aside className="flex flex-col w-64 h-screen border-r border-sidebar-border bg-sidebar shrink-0">
-        <div className="flex items-center gap-2 px-4 py-4 border-b border-sidebar-border">
-          <Wrench className="h-6 w-6 text-primary" />
-          <h1 className="text-lg font-bold text-sidebar-foreground">DevToolkit</h1>
-        </div>
-
-        <nav className="flex-1 overflow-y-auto py-2">
-          <div className="px-3 py-2">
-            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 px-2">
-              Tools
-            </p>
-            <ul className="space-y-1">
-              {tools.map((tool) => (
-                <li key={tool.path}>
-                  <NavLink
-                    to={tool.path}
-                    end={tool.path === "/"}
-                    className={({ isActive }) =>
-                      cn(
-                        "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors",
-                        isActive
-                          ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
-                          : "text-muted-foreground hover:text-sidebar-foreground hover:bg-sidebar-accent/50"
-                      )
-                    }
-                  >
-                    <tool.icon className="h-4 w-4 shrink-0" />
-                    <span>{tool.name}</span>
-                  </NavLink>
-                </li>
-              ))}
-            </ul>
+      <aside
+        className={cn(
+          "flex flex-col h-screen border-r border-sidebar-border bg-sidebar shrink-0 transition-[width] duration-200",
+          collapsed ? "w-14" : "w-64"
+        )}
+      >
+        {/* Header */}
+        {collapsed ? (
+          <div className="flex items-center justify-center px-1 py-4 border-b border-sidebar-border">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-9 w-9 text-muted-foreground hover:text-sidebar-foreground"
+              onClick={() => setCollapsed(false)}
+              title="Expand sidebar"
+            >
+              <PanelLeftOpen className="h-5 w-5" />
+            </Button>
           </div>
+        ) : (
+          <div className="flex items-center gap-2 px-3 py-4 border-b border-sidebar-border">
+            <Wrench className="h-6 w-6 text-primary shrink-0" />
+            <h1 className="text-lg font-bold text-sidebar-foreground truncate flex-1">DevToolkit</h1>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="shrink-0 text-muted-foreground hover:text-sidebar-foreground h-7 w-7"
+              onClick={() => setCollapsed(true)}
+              title="Collapse sidebar"
+            >
+              <PanelLeftClose className="h-4 w-4" />
+            </Button>
+          </div>
+        )}
+
+        {/* Nav */}
+        <nav className="flex-1 overflow-y-auto py-2">
+          {/* Home link */}
+          <div className={cn("px-2", collapsed ? "px-1.5" : "px-3")}>
+            <NavLink
+              to="/"
+              end
+              title="Home"
+              className={({ isActive }) =>
+                cn(
+                  "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors mb-1",
+                  collapsed && "justify-center px-0",
+                  isActive
+                    ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+                    : "text-muted-foreground hover:text-sidebar-foreground hover:bg-sidebar-accent/50"
+                )
+              }
+            >
+              <Home className="h-4 w-4 shrink-0" />
+              {!collapsed && <span>Home</span>}
+            </NavLink>
+          </div>
+
+          {/* Categories */}
+          {categories.map((category) => (
+            <div key={category.name} className={cn("mt-1", collapsed ? "px-1.5" : "px-3")}>
+              {collapsed ? (
+                /* Collapsed: show all tool icons directly */
+                <div className="space-y-1">
+                  {category.tools.map((tool) => (
+                    <NavLink
+                      key={tool.path}
+                      to={tool.path}
+                      title={tool.name}
+                      className={({ isActive }) =>
+                        cn(
+                          "flex items-center justify-center rounded-lg py-2 text-sm transition-colors",
+                          isActive
+                            ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+                            : "text-muted-foreground hover:text-sidebar-foreground hover:bg-sidebar-accent/50"
+                        )
+                      }
+                    >
+                      <tool.icon className="h-4 w-4 shrink-0" />
+                    </NavLink>
+                  ))}
+                </div>
+              ) : (
+                /* Expanded: show category header + collapsible tool list */
+                <>
+                  <button
+                    onClick={() => toggleCategory(category.name)}
+                    className="flex items-center justify-between w-full rounded-lg px-2 py-1.5 text-xs font-semibold text-muted-foreground uppercase tracking-wider hover:text-sidebar-foreground transition-colors cursor-pointer"
+                  >
+                    <span>{category.name}</span>
+                    {expandedCategories.has(category.name) ? (
+                      <ChevronDown className="h-3 w-3" />
+                    ) : (
+                      <ChevronRight className="h-3 w-3" />
+                    )}
+                  </button>
+                  {expandedCategories.has(category.name) && (
+                    <ul className="space-y-1 mt-1">
+                      {category.tools.map((tool) => (
+                        <li key={tool.path}>
+                          <NavLink
+                            to={tool.path}
+                            className={({ isActive }) =>
+                              cn(
+                                "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors",
+                                isActive
+                                  ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+                                  : "text-muted-foreground hover:text-sidebar-foreground hover:bg-sidebar-accent/50"
+                              )
+                            }
+                          >
+                            <tool.icon className="h-4 w-4 shrink-0" />
+                            <span>{tool.name}</span>
+                          </NavLink>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </>
+              )}
+            </div>
+          ))}
         </nav>
 
-        <div className="px-3 py-3 border-t border-sidebar-border flex gap-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="flex-1 justify-start text-muted-foreground hover:text-sidebar-foreground"
-            onClick={() => setSettingsOpen(true)}
-          >
-            <Settings className="h-4 w-4 mr-2" />
-            Settings
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="flex-1 justify-start text-muted-foreground hover:text-sidebar-foreground"
-            onClick={() => setAboutOpen(true)}
-          >
-            <Info className="h-4 w-4 mr-2" />
-            About
-          </Button>
+        {/* Footer */}
+        <div className="px-2 py-3 border-t border-sidebar-border space-y-1">
+          {collapsed ? (
+            <>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="w-full text-muted-foreground hover:text-sidebar-foreground"
+                onClick={() => setSettingsOpen(true)}
+                title="Settings"
+              >
+                <Settings className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="w-full text-muted-foreground hover:text-sidebar-foreground"
+                onClick={() => setAboutOpen(true)}
+                title="About"
+              >
+                <Info className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="w-full text-muted-foreground hover:text-sidebar-foreground"
+                onClick={() => setAboutOpen(true)}
+                title="About"
+              >
+                <Info className="h-4 w-4" />
+              </Button>
+            </>
+          ) : (
+            <>
+              <div className="flex gap-1">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="flex-1 justify-start text-muted-foreground hover:text-sidebar-foreground"
+                  onClick={() => setSettingsOpen(true)}
+                >
+                  <Settings className="h-4 w-4 mr-2" />
+                  Settings
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="flex-1 justify-start text-muted-foreground hover:text-sidebar-foreground"
+                  onClick={() => setAboutOpen(true)}
+                >
+                  <Info className="h-4 w-4 mr-2" />
+                  About
+                </Button>
+              </div>
+            </>
+          )}
         </div>
       </aside>
 
@@ -153,13 +335,13 @@ export function Sidebar() {
             <Wrench className="h-10 w-10 text-primary" />
           </div>
           <div>
-            <h3 className="text-xl font-bold">{aboutInfo.name}</h3>
-            <p className="text-sm text-muted-foreground mt-1">Version {aboutInfo.version}</p>
+            <h3 className="text-xl font-bold">{appConfig.aboutInfo.name}</h3>
+            <p className="text-sm text-muted-foreground mt-1">Version {appConfig.aboutInfo.version}</p>
           </div>
-          <p className="text-sm text-muted-foreground">{aboutInfo.description}</p>
+          <p className="text-sm text-muted-foreground">{appConfig.aboutInfo.description}</p>
           <div className="w-full border-t pt-3 mt-1">
             <p className="text-xs text-muted-foreground">
-              Built with Electron, React, TypeScript & Tailwind CSS
+              Built with {appConfig.aboutInfo.builtWith}
             </p>
           </div>
         </div>

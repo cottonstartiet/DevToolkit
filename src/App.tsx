@@ -6,6 +6,7 @@ import { JsonFormatterPage } from "./pages/JsonFormatterPage"
 import { JsonComparePage } from "./pages/JsonComparePage"
 import { Base64Page } from "./pages/Base64Page"
 import { MarkdownPdfPage } from "./pages/MarkdownPdfPage"
+import { YamlJsonPage } from "./pages/YamlJsonPage"
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
           <Route path="/json-compare" element={<JsonComparePage />} />
           <Route path="/base64" element={<Base64Page />} />
           <Route path="/markdown-pdf" element={<MarkdownPdfPage />} />
+          <Route path="/yaml-json" element={<YamlJsonPage />} />
         </Route>
       </Routes>
     </HashRouter>

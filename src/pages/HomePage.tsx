@@ -3,6 +3,7 @@ import {
   Braces,
   ArrowLeftRight,
   GitCompare,
+  FileCode,
   FileText,
 } from "lucide-react"
 import { Link } from "react-router-dom"
@@ -26,6 +27,12 @@ const tools = [
     description: "Compare two JSON objects side by side",
     path: "/json-compare",
     icon: GitCompare,
+  },
+  {
+    name: "YAML ↔ JSON Converter",
+    description: "Convert between YAML and JSON formats",
+    path: "/yaml-json",
+    icon: FileCode,
   },
   {
     name: "Base64 Encoder/Decoder",
