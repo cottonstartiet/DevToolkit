@@ -15,7 +15,7 @@ Additional developer tools to add to DevToolkit. All tools are fully offline-cap
 | ✅ Base64 Encoder/Decoder | Encode and decode Base64 strings (already built)                  |
 | URL Encoder/Decoder     | Encode/decode `%20`-style URL components                            |
 | HTML Entity Encoder     | Convert `<div>` ↔ `&lt;div&gt;`                                    |
-| JWT Decoder             | Paste a JWT, see header/payload/expiry — no verification needed     |
+| ✅ JWT Decoder           | Paste a JWT, see header/payload/expiry — no verification needed (already built) |
 | Number Base Converter   | Decimal ↔ Hex ↔ Octal ↔ Binary                                     |
 | Color Converter         | HEX ↔ RGB ↔ HSL with a visual picker                               |
 

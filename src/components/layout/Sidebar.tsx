@@ -20,6 +20,7 @@ import {
   ChevronRight,
   Sparkles,
   Database,
+  KeyRound,
   type LucideIcon,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -53,6 +54,7 @@ const categories: ToolCategory[] = [
     icon: ArrowLeftRight,
     tools: [
       { name: "Base64 Encoder/Decoder", path: "/base64", icon: ArrowLeftRight },
+      { name: "JWT Decoder", path: "/jwt-decoder", icon: KeyRound },
     ],
   },
   {

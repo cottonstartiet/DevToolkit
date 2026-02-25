@@ -5,6 +5,7 @@ import {
   GitCompare,
   FileCode,
   FileText,
+  KeyRound,
 } from "lucide-react"
 import { Link } from "react-router-dom"
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
@@ -45,6 +46,12 @@ const tools = [
     description: "Convert Markdown text to downloadable PDF",
     path: "/markdown-pdf",
     icon: FileText,
+  },
+  {
+    name: "JWT Decoder",
+    description: "Decode and inspect JWT header, payload, and claims",
+    path: "/jwt-decoder",
+    icon: KeyRound,
   },
 ]
 
