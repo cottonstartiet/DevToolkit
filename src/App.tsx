@@ -9,6 +9,7 @@ import { MarkdownPdfPage } from "./pages/MarkdownPdfPage"
 import { YamlJsonPage } from "./pages/YamlJsonPage"
 import { JwtDecoderPage } from "./pages/JwtDecoderPage"
 import { RegexTesterPage } from "./pages/RegexTesterPage"
+import { UrlEncoderPage } from "./pages/UrlEncoderPage"
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
           <Route path="/yaml-json" element={<YamlJsonPage />} />
           <Route path="/jwt-decoder" element={<JwtDecoderPage />} />
           <Route path="/regex-tester" element={<RegexTesterPage />} />
+          <Route path="/url-encoder" element={<UrlEncoderPage />} />
         </Route>
       </Routes>
     </HashRouter>

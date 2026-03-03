@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react"
-import { NavLink, useLocation } from "react-router-dom"
+import { useState, useEffect, useRef } from "react"
+import { NavLink, useLocation, useNavigate } from "react-router-dom"
 import {
   Hash,
   Braces,
@@ -21,6 +21,7 @@ import {
   Sparkles,
   Database,
   KeyRound,
+  Link2,
   Regex,
   Star,
   type LucideIcon,
@@ -58,6 +59,7 @@ const categories: ToolCategory[] = [
     tools: [
       { name: "Base64 Encoder/Decoder", path: "/base64", icon: ArrowLeftRight },
       { name: "JWT Decoder", path: "/jwt-decoder", icon: KeyRound },
+      { name: "URL Encoder/Decoder", path: "/url-encoder", icon: Link2 },
     ],
   },
   {
@@ -78,6 +80,88 @@ const categories: ToolCategory[] = [
     ],
   },
 ]
+
+function CollapsedCategoryMenu({
+  icon: Icon,
+  label,
+  tools,
+  isActive,
+}: {
+  icon: LucideIcon
+  label: string
+  tools: Tool[]
+  isActive: boolean
+}) {
+  const [open, setOpen] = useState(false)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const buttonRef = useRef<HTMLButtonElement>(null)
+  const navigate = useNavigate()
+  const location = useLocation()
+  const [menuPos, setMenuPos] = useState({ top: 0, left: 0 })
+
+  useEffect(() => {
+    if (!open) return
+    function handleClick(e: MouseEvent) {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) setOpen(false)
+    }
+    document.addEventListener("mousedown", handleClick)
+    return () => document.removeEventListener("mousedown", handleClick)
+  }, [open])
+
+  const handleToggle = () => {
+    if (!open && buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect()
+      setMenuPos({ top: rect.top, left: rect.right + 4 })
+    }
+    setOpen((v) => !v)
+  }
+
+  return (
+    <div ref={containerRef}>
+      <button
+        ref={buttonRef}
+        onClick={handleToggle}
+        title={label}
+        className={cn(
+          "flex items-center justify-center w-full rounded-lg py-2 text-sm transition-colors cursor-pointer",
+          isActive
+            ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+            : "text-muted-foreground hover:text-sidebar-foreground hover:bg-sidebar-accent/50"
+        )}
+      >
+        <Icon className="h-4 w-4 shrink-0" />
+      </button>
+      {open && (
+        <div
+          className="fixed z-50 min-w-48 rounded-lg border border-border bg-sidebar shadow-lg py-1"
+          style={{ top: menuPos.top, left: menuPos.left }}
+        >
+          <div className="px-3 py-1.5 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            {label}
+          </div>
+          {tools.map((tool) => (
+            <button
+              key={tool.path}
+              onClick={() => {
+                navigate(tool.path)
+                setOpen(false)
+              }}
+              className={cn(
+                "flex items-center gap-3 w-full px-3 py-2 text-sm transition-colors cursor-pointer",
+                location.pathname === tool.path
+                  ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+                  : "text-muted-foreground hover:text-sidebar-foreground hover:bg-sidebar-accent/50"
+              )}
+            >
+              <tool.icon className="h-4 w-4 shrink-0" />
+              <span>{tool.name}</span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
 
 const themeOptions = [
   { value: "light" as const, label: "Light", icon: Sun },
@@ -191,25 +275,12 @@ export function Sidebar() {
           {favouriteTools.length > 0 && (
             <div className={cn("mt-1", collapsed ? "px-1.5" : "px-3")}>
               {collapsed ? (
-                <div className="space-y-1">
-                  {favouriteTools.map((tool) => (
-                    <NavLink
-                      key={`fav-${tool.path}`}
-                      to={tool.path}
-                      title={tool.name}
-                      className={({ isActive }) =>
-                        cn(
-                          "flex items-center justify-center rounded-lg py-2 text-sm transition-colors",
-                          isActive
-                            ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
-                            : "text-muted-foreground hover:text-sidebar-foreground hover:bg-sidebar-accent/50"
-                        )
-                      }
-                    >
-                      <Star className="h-4 w-4 shrink-0 fill-yellow-500 text-yellow-500" />
-                    </NavLink>
-                  ))}
-                </div>
+                <CollapsedCategoryMenu
+                  icon={Star}
+                  label="Favourites"
+                  tools={favouriteTools}
+                  isActive={favouriteTools.some((t) => t.path === location.pathname)}
+                />
               ) : (
                 <>
                   <button
@@ -254,26 +325,12 @@ export function Sidebar() {
           {categories.map((category) => (
             <div key={category.name} className={cn("mt-1", collapsed ? "px-1.5" : "px-3")}>
               {collapsed ? (
-                /* Collapsed: show all tool icons directly */
-                <div className="space-y-1">
-                  {category.tools.map((tool) => (
-                    <NavLink
-                      key={tool.path}
-                      to={tool.path}
-                      title={tool.name}
-                      className={({ isActive }) =>
-                        cn(
-                          "flex items-center justify-center rounded-lg py-2 text-sm transition-colors",
-                          isActive
-                            ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
-                            : "text-muted-foreground hover:text-sidebar-foreground hover:bg-sidebar-accent/50"
-                        )
-                      }
-                    >
-                      <tool.icon className="h-4 w-4 shrink-0" />
-                    </NavLink>
-                  ))}
-                </div>
+                <CollapsedCategoryMenu
+                  icon={category.icon}
+                  label={category.name}
+                  tools={category.tools}
+                  isActive={category.tools.some((t) => t.path === location.pathname)}
+                />
               ) : (
                 /* Expanded: show category header + collapsible tool list */
                 <>

@@ -6,6 +6,7 @@ import {
   FileCode,
   FileText,
   KeyRound,
+  Link2,
   Regex,
   Star,
   type LucideIcon,
@@ -64,6 +65,12 @@ const tools: HomeTool[] = [
     description: "Decode and inspect JWT header, payload, and claims",
     path: "/jwt-decoder",
     icon: KeyRound,
+  },
+  {
+    name: "URL Encoder/Decoder",
+    description: "Encode and decode URL components",
+    path: "/url-encoder",
+    icon: Link2,
   },
   {
     name: "Regex Tester",
