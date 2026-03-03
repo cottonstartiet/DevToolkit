@@ -95,32 +95,31 @@ function CollapsedCategoryMenu({
   const [open, setOpen] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const navigate = useNavigate()
   const location = useLocation()
   const [menuPos, setMenuPos] = useState({ top: 0, left: 0 })
 
-  useEffect(() => {
-    if (!open) return
-    function handleClick(e: MouseEvent) {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) setOpen(false)
+  const handleEnter = () => {
+    if (closeTimer.current) {
+      clearTimeout(closeTimer.current)
+      closeTimer.current = null
     }
-    document.addEventListener("mousedown", handleClick)
-    return () => document.removeEventListener("mousedown", handleClick)
-  }, [open])
-
-  const handleToggle = () => {
-    if (!open && buttonRef.current) {
+    if (buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect()
       setMenuPos({ top: rect.top, left: rect.right + 4 })
     }
-    setOpen((v) => !v)
+    setOpen(true)
+  }
+
+  const handleLeave = () => {
+    closeTimer.current = setTimeout(() => setOpen(false), 150)
   }
 
   return (
-    <div ref={containerRef}>
+    <div ref={containerRef} onMouseEnter={handleEnter} onMouseLeave={handleLeave}>
       <button
         ref={buttonRef}
-        onClick={handleToggle}
         title={label}
         className={cn(
           "flex items-center justify-center w-full rounded-lg py-2 text-sm transition-colors cursor-pointer",
@@ -135,6 +134,8 @@ function CollapsedCategoryMenu({
         <div
           className="fixed z-50 min-w-48 rounded-lg border border-border bg-sidebar shadow-lg py-1"
           style={{ top: menuPos.top, left: menuPos.left }}
+          onMouseEnter={handleEnter}
+          onMouseLeave={handleLeave}
         >
           <div className="px-3 py-1.5 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
             {label}
