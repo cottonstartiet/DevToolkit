@@ -2,7 +2,8 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Textarea } from "@/components/ui/textarea"
-import { GitCompare, AlertCircle } from "lucide-react"
+import { GitCompare, AlertCircle, Copy, Check } from "lucide-react"
+import { copyToClipboard } from "@/lib/utils"
 
 type DiffResult = {
   path: string
@@ -63,10 +64,22 @@ function formatValue(val: unknown): string {
 }
 
 export function JsonComparePage() {
-  const [left, setLeft] = useState("")
-  const [right, setRight] = useState("")
+  const [left, setLeft] = useState(`{
+  "name": "Alice",
+  "age": 30,
+  "role": "developer",
+  "skills": ["TypeScript", "React"]
+}`)
+  const [right, setRight] = useState(`{
+  "name": "Alice",
+  "age": 31,
+  "role": "lead developer",
+  "skills": ["TypeScript", "React", "Node.js"],
+  "location": "remote"
+}`)
   const [diffs, setDiffs] = useState<DiffResult[] | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [copied, setCopied] = useState(false)
 
   const compare = () => {
     try {
@@ -127,9 +140,32 @@ export function JsonComparePage() {
       {diffs !== null && (
         <Card className="mt-4 shrink-0 max-h-48 overflow-y-auto">
           <CardHeader>
-            <CardTitle className="text-base">
-              {diffs.length === 0 ? "✓ No differences found" : `${diffs.length} difference(s) found`}
-            </CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-base">
+                {diffs.length === 0 ? "✓ No differences found" : `${diffs.length} difference(s) found`}
+              </CardTitle>
+              {diffs.length > 0 && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={async () => {
+                    const text = diffs
+                      .map((d) => {
+                        if (d.type === "changed") return `[CHANGED] ${d.path}\n- ${formatValue(d.left)}\n+ ${formatValue(d.right)}`
+                        if (d.type === "added") return `[ADDED] ${d.path}\n+ ${formatValue(d.right)}`
+                        return `[REMOVED] ${d.path}\n- ${formatValue(d.left)}`
+                      })
+                      .join("\n\n")
+                    await copyToClipboard(text)
+                    setCopied(true)
+                    setTimeout(() => setCopied(false), 1500)
+                  }}
+                >
+                  {copied ? <Check className="h-3 w-3 mr-1" /> : <Copy className="h-3 w-3 mr-1" />}
+                  {copied ? "Copied!" : "Copy"}
+                </Button>
+              )}
+            </div>
           </CardHeader>
           {diffs.length > 0 && (
             <CardContent>

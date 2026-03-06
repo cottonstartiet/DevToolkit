@@ -258,9 +258,9 @@ const HIGHLIGHT_COLORS = [
 /* ------------------------------------------------------------------ */
 
 export function RegexTesterPage() {
-  const [pattern, setPattern] = useState("")
+  const [pattern, setPattern] = useState("(\\d{4})-(\\d{2})-(\\d{2})")
   const [activeFlags, setActiveFlags] = useState<Set<RegexFlag>>(new Set(["g"]))
-  const [testString, setTestString] = useState("")
+  const [testString, setTestString] = useState("Today is 2026-03-06 and tomorrow is 2026-03-07.")
   const [cheatOpen, setCheatOpen] = useState(false)
 
   const flagString = useMemo(

@@ -10,7 +10,15 @@ import * as yaml from "js-yaml"
 type ConvertMode = "yaml-to-json" | "json-to-yaml"
 
 export function YamlJsonPage() {
-  const [input, setInput] = useState("")
+  const [input, setInput] = useState(`name: DevToolkit
+version: 1.0.0
+features:
+  - offline
+  - fast
+  - open-source
+settings:
+  theme: dark
+  indent: 2`)
   const [output, setOutput] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [mode, setMode] = useState<ConvertMode>("yaml-to-json")

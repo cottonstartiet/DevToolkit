@@ -2,7 +2,8 @@ import { useState, useMemo } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
-import { Trash2 } from "lucide-react"
+import { Trash2, Copy, Check } from "lucide-react"
+import { copyToClipboard } from "@/lib/utils"
 
 const sampleText = `The quick brown fox jumps over the lazy dog. Pack my box with five dozen liquor jugs.
 
@@ -42,6 +43,7 @@ function formatBytes(bytes: number): string {
 
 export function CharacterCounterPage() {
   const [text, setText] = useState(sampleText)
+  const [copied, setCopied] = useState(false)
   const stats = useMemo(() => computeStats(text), [text])
 
   const statItems = [
@@ -61,6 +63,23 @@ export function CharacterCounterPage() {
         <p className="text-muted-foreground">
           Count characters, words, lines, sentences, paragraphs, and byte size.
         </p>
+      </div>
+
+      <div className="flex items-center justify-between mb-4 shrink-0">
+        <div />
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={async () => {
+            const text = statItems.map((s) => `${s.label}: ${s.value}`).join("\n")
+            await copyToClipboard(text)
+            setCopied(true)
+            setTimeout(() => setCopied(false), 1500)
+          }}
+        >
+          {copied ? <Check className="h-3 w-3 mr-1" /> : <Copy className="h-3 w-3 mr-1" />}
+          {copied ? "Copied!" : "Copy Stats"}
+        </Button>
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3 mb-4 shrink-0">

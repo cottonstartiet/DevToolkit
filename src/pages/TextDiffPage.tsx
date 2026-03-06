@@ -3,8 +3,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
-import { Trash2 } from "lucide-react"
+import { Trash2, Copy, Check } from "lucide-react"
 import { diffLines, diffWords, diffChars, type Change } from "diff"
+import { copyToClipboard } from "@/lib/utils"
 
 type DiffMode = "lines" | "words" | "chars"
 
@@ -33,6 +34,7 @@ export function TextDiffPage() {
   const [left, setLeft] = useState(sampleLeft)
   const [right, setRight] = useState(sampleRight)
   const [mode, setMode] = useState<DiffMode>("words")
+  const [copied, setCopied] = useState(false)
 
   const changes = useMemo(() => computeDiff(left, right, mode), [left, right, mode])
 
@@ -120,7 +122,28 @@ export function TextDiffPage() {
       {(left || right) && (
         <Card className="mt-4 flex-1 min-h-0 flex flex-col">
           <CardHeader className="pb-2 shrink-0">
-            <CardTitle className="text-base">Diff Result</CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-base">Diff Result</CardTitle>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={async () => {
+                  const text = changes
+                    .map((c) => {
+                      if (c.added) return `[+] ${c.value}`
+                      if (c.removed) return `[-] ${c.value}`
+                      return c.value
+                    })
+                    .join("")
+                  await copyToClipboard(text)
+                  setCopied(true)
+                  setTimeout(() => setCopied(false), 1500)
+                }}
+              >
+                {copied ? <Check className="h-3 w-3 mr-1" /> : <Copy className="h-3 w-3 mr-1" />}
+                {copied ? "Copied!" : "Copy"}
+              </Button>
+            </div>
           </CardHeader>
           <CardContent className="flex-1 min-h-0 overflow-y-auto">
             <pre className="text-sm font-mono whitespace-pre-wrap break-words">

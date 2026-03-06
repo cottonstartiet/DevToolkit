@@ -6,7 +6,7 @@ import { Copy, ArrowLeftRight } from "lucide-react"
 import { copyToClipboard } from "@/lib/utils"
 
 export function Base64Page() {
-  const [input, setInput] = useState("")
+  const [input, setInput] = useState("Hello, World! 🌍")
   const [output, setOutput] = useState("")
   const [mode, setMode] = useState<"encode" | "decode">("encode")
   const [error, setError] = useState<string | null>(null)

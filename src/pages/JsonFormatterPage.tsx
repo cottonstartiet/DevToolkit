@@ -7,7 +7,12 @@ import { Copy, Braces, MinusSquare, Check, AlertCircle } from "lucide-react"
 import { copyToClipboard } from "@/lib/utils"
 
 export function JsonFormatterPage() {
-  const [input, setInput] = useState("")
+  const [input, setInput] = useState(`{
+  "name": "DevToolkit",
+  "version": "1.0.0",
+  "features": ["offline", "fast", "open-source"],
+  "settings": { "theme": "dark", "indent": 2 }
+}`)
   const [output, setOutput] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [indent, setIndent] = useState(2)

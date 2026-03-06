@@ -26,7 +26,7 @@ function toISOLocal(date: Date): string {
 
 export function UnixTimestampPage() {
   const [now, setNow] = useState(() => Math.floor(Date.now() / 1000))
-  const [timestampInput, setTimestampInput] = useState("")
+  const [timestampInput, setTimestampInput] = useState("1700000000")
   const [dateInput, setDateInput] = useState("")
   const [convertedDate, setConvertedDate] = useState<string | null>(null)
   const [convertedTimestamp, setConvertedTimestamp] = useState<string | null>(null)

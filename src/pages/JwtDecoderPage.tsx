@@ -137,7 +137,9 @@ function TimestampClaims({ payload }: { payload: Record<string, unknown> }) {
 }
 
 export function JwtDecoderPage() {
-  const [input, setInput] = useState("")
+  const [input, setInput] = useState(
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+  )
   const [decoded, setDecoded] = useState<DecodedJwt | null>(null)
   const [error, setError] = useState<string | null>(null)
 

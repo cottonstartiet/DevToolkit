@@ -3,9 +3,10 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { AlertCircle, Clock, Trash2, Play } from "lucide-react"
+import { AlertCircle, Clock, Trash2, Play, Copy, Check } from "lucide-react"
 import { CronExpressionParser } from "cron-parser"
 import cronstrue from "cronstrue"
+import { copyToClipboard } from "@/lib/utils"
 
 interface ParseResult {
   description: string
@@ -58,6 +59,7 @@ export function CronParserPage() {
   const [runCount, setRunCount] = useState(10)
   const [result, setResult] = useState<ParseResult | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [copied, setCopied] = useState(false)
 
   const parse = useCallback(() => {
     const trimmed = expression.trim()
@@ -196,7 +198,22 @@ export function CronParserPage() {
             <>
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-base">Description</CardTitle>
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-base">Description</CardTitle>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={async () => {
+                        const text = `${expression.trim()}\n${result.description}\n\nNext ${result.nextRuns.length} runs:\n${result.nextRuns.map((d, i) => `${i + 1}. ${formatDate(d)}`).join("\n")}`
+                        await copyToClipboard(text)
+                        setCopied(true)
+                        setTimeout(() => setCopied(false), 1500)
+                      }}
+                    >
+                      {copied ? <Check className="h-3 w-3 mr-1" /> : <Copy className="h-3 w-3 mr-1" />}
+                      {copied ? "Copied!" : "Copy All"}
+                    </Button>
+                  </div>
                 </CardHeader>
                 <CardContent>
                   <p className="text-lg">{result.description}</p>

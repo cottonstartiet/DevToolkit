@@ -6,7 +6,7 @@ import { Copy, ArrowLeftRight } from "lucide-react"
 import { copyToClipboard } from "@/lib/utils"
 
 export function UrlEncoderPage() {
-  const [input, setInput] = useState("")
+  const [input, setInput] = useState("https://example.com/search?q=hello world&lang=en")
   const [output, setOutput] = useState("")
   const [mode, setMode] = useState<"encode" | "decode">("encode")
   const [error, setError] = useState<string | null>(null)
