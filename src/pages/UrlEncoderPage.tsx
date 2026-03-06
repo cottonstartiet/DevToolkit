@@ -12,12 +12,41 @@ export function UrlEncoderPage() {
   const [error, setError] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
 
+  const encodeUrl = (raw: string): string => {
+    try {
+      const url = new URL(raw)
+      const encodedParams = new URLSearchParams()
+      url.searchParams.forEach((value, key) => {
+        encodedParams.set(key, value)
+      })
+      url.search = encodedParams.toString()
+      return url.toString()
+    } catch {
+      // Not a valid URL — fall back to encoding the whole string
+      return encodeURIComponent(raw)
+    }
+  }
+
+  const decodeUrl = (encoded: string): string => {
+    try {
+      const url = new URL(encoded)
+      const params = new URLSearchParams(url.search)
+      const decoded = Array.from(params.entries())
+        .map(([k, v]) => `${decodeURIComponent(k)}=${decodeURIComponent(v)}`)
+        .join("&")
+      url.search = decoded ? `?${decoded}` : ""
+      return decodeURIComponent(url.toString())
+    } catch {
+      return decodeURIComponent(encoded.trim())
+    }
+  }
+
   const process = () => {
     try {
       if (mode === "encode") {
-        setOutput(encodeURIComponent(input))
+        setOutput(encodeUrl(input))
       } else {
-        setOutput(decodeURIComponent(input.trim()))
+        setOutput(decodeUrl(input.trim()))
       }
       setError(null)
     } catch {
