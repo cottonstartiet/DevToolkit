@@ -1,3 +1,4 @@
+import { useState, useRef } from "react"
 import {
   Hash,
   Braces,
@@ -21,10 +22,13 @@ import {
   Globe,
   Network,
   Star,
+  Search,
+  X,
   type LucideIcon,
 } from "lucide-react"
 import { Link } from "react-router-dom"
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
 import { useFavourites } from "@/contexts/FavouritesContext"
 import { cn } from "@/lib/utils"
 
@@ -166,23 +170,70 @@ const tools: HomeTool[] = [
 
 export function HomePage() {
   const { favourites, toggleFavourite, isFavourite } = useFavourites()
+  const [search, setSearch] = useState("")
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  const query = search.toLowerCase().trim()
+
+  const filterTools = (list: HomeTool[]) =>
+    query
+      ? list.filter(
+          (t) =>
+            t.name.toLowerCase().includes(query) ||
+            t.description.toLowerCase().includes(query)
+        )
+      : list
 
   const favouriteTools = tools.filter((t) => favourites.has(t.path))
-  const displayTools = favouriteTools.length > 0 ? favouriteTools : tools
+  const displayTools = filterTools(
+    favouriteTools.length > 0 && !query ? favouriteTools : tools
+  )
+  const nonFavTools = filterTools(
+    tools.filter((t) => !favourites.has(t.path))
+  )
 
   return (
     <div className="max-w-4xl mx-auto">
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">DevToolkit</h1>
         <p className="text-muted-foreground text-lg">
-          {favouriteTools.length > 0
+          {favouriteTools.length > 0 && !query
             ? "Your favourite tools — quick access to what you use most."
             : "A collection of offline developer tools in a single desktop app."}
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {displayTools.map((tool) => (
+      <div className="relative mb-6">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+        <Input
+          ref={inputRef}
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search tools..."
+          className="pl-9 pr-9"
+        />
+        {search && (
+          <button
+            onClick={() => {
+              setSearch("")
+              inputRef.current?.focus()
+            }}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        )}
+      </div>
+
+      {displayTools.length === 0 && (
+        <div className="text-center text-muted-foreground py-12">
+          No tools match "<span className="font-medium text-foreground">{search}</span>"
+        </div>
+      )}
+
+      {displayTools.length > 0 && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {displayTools.map((tool) => (
           <div key={tool.path} className="relative group">
             <Link to={tool.path}>
               <Card className="hover:border-primary/50 transition-colors cursor-pointer h-full">
@@ -213,13 +264,14 @@ export function HomePage() {
             </button>
           </div>
         ))}
-      </div>
+        </div>
+      )}
 
-      {favouriteTools.length > 0 && (
+      {favouriteTools.length > 0 && !query && nonFavTools.length > 0 && (
         <div className="mt-8">
           <h2 className="text-xl font-semibold mb-4">All Tools</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {tools.filter((t) => !favourites.has(t.path)).map((tool) => (
+            {nonFavTools.map((tool) => (
               <div key={tool.path} className="relative group">
                 <Link to={tool.path}>
                   <Card className="hover:border-primary/50 transition-colors cursor-pointer h-full">
