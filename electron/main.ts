@@ -31,7 +31,7 @@ function createWindow() {
     minWidth: 900,
     minHeight: 600,
     title: 'DevToolkit',
-    icon: path.join(process.env.VITE_PUBLIC, 'electron-vite.svg'),
+    icon: path.join(process.env.VITE_PUBLIC, 'icon.svg'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.mjs'),
     },

@@ -3,6 +3,11 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
+  "author": {
+    "name": "Aseem Gaurav",
+    "url": "https://ritekode-web-c0481.web.app/products/devtoolkit/",
+    "github": "https://github.com/cottonstartiet/DevToolkit"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build && electron-builder",
