@@ -23,7 +23,19 @@ import {
   KeyRound,
   Link2,
   Regex,
+  FileCode2,
   Star,
+  Clock,
+  Binary,
+  Palette,
+  CaseSensitive,
+  Columns2,
+  AlignLeft,
+  Minus,
+  Lock,
+  Timer,
+  Globe,
+  Network,
   type LucideIcon,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -60,6 +72,8 @@ const categories: ToolCategory[] = [
       { name: "Base64 Encoder/Decoder", path: "/base64", icon: ArrowLeftRight },
       { name: "JWT Decoder", path: "/jwt-decoder", icon: KeyRound },
       { name: "URL Encoder/Decoder", path: "/url-encoder", icon: Link2 },
+      { name: "Number Base Converter", path: "/number-base", icon: Binary },
+      { name: "Color Converter", path: "/color-converter", icon: Palette },
     ],
   },
   {
@@ -67,6 +81,10 @@ const categories: ToolCategory[] = [
     icon: Regex,
     tools: [
       { name: "Regex Tester", path: "/regex-tester", icon: Regex },
+      { name: "String Case Converter", path: "/string-case", icon: CaseSensitive },
+      { name: "Text Diff", path: "/text-diff", icon: Columns2 },
+      { name: "Character / Word Counter", path: "/char-counter", icon: AlignLeft },
+      { name: "Slug Generator", path: "/slug-generator", icon: Minus },
     ],
   },
   {
@@ -76,7 +94,31 @@ const categories: ToolCategory[] = [
       { name: "JSON Formatter", path: "/json-formatter", icon: Braces },
       { name: "JSON Compare", path: "/json-compare", icon: GitCompare },
       { name: "YAML ↔ JSON", path: "/yaml-json", icon: FileCode },
+      { name: "XML ↔ JSON", path: "/xml-json", icon: FileCode2 },
+      { name: "Cron Expression Parser", path: "/cron-parser", icon: Clock },
       { name: "Markdown to PDF", path: "/markdown-pdf", icon: FileText },
+    ],
+  },
+  {
+    name: "Hashing & Crypto",
+    icon: Lock,
+    tools: [
+      { name: "Hash Generator", path: "/hash-generator", icon: Lock },
+    ],
+  },
+  {
+    name: "Date & Time",
+    icon: Timer,
+    tools: [
+      { name: "Unix Timestamp Converter", path: "/unix-timestamp", icon: Timer },
+    ],
+  },
+  {
+    name: "Network & API",
+    icon: Globe,
+    tools: [
+      { name: "HTTP Status Codes", path: "/http-status", icon: Globe },
+      { name: "CIDR / Subnet Calculator", path: "/cidr-calculator", icon: Network },
     ],
   },
 ]
