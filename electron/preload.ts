@@ -34,4 +34,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
     add: (toolPath: string): Promise<void> => ipcRenderer.invoke('favourites:add', toolPath),
     remove: (toolPath: string): Promise<void> => ipcRenderer.invoke('favourites:remove', toolPath),
   },
+  bootstrap: (): Promise<{ settings: Record<string, string>; favourites: string[] }> =>
+    ipcRenderer.invoke('app:bootstrap'),
 })

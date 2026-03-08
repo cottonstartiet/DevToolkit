@@ -35,5 +35,6 @@ interface Window {
       add: (toolPath: string) => Promise<void>
       remove: (toolPath: string) => Promise<void>
     }
+    bootstrap: () => Promise<{ settings: Record<string, string>; favourites: string[] }>
   }
 }

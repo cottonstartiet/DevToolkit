@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, useCallback, type ReactNode } from "react"
+import { createContext, useContext, useState, useCallback, type ReactNode } from "react"
 
 interface FavouritesContextType {
   favourites: Set<string>
@@ -8,16 +8,10 @@ interface FavouritesContextType {
 
 const FavouritesContext = createContext<FavouritesContextType | undefined>(undefined)
 
-export function FavouritesProvider({ children }: { children: ReactNode }) {
-  const [favourites, setFavourites] = useState<Set<string>>(new Set())
-  const [loaded, setLoaded] = useState(false)
-
-  useEffect(() => {
-    window.electronAPI.favourites.getAll().then((paths) => {
-      setFavourites(new Set(paths))
-      setLoaded(true)
-    })
-  }, [])
+export function FavouritesProvider({ children, initialFavourites }: { children: ReactNode; initialFavourites?: string[] }) {
+  const [favourites, setFavourites] = useState<Set<string>>(
+    () => new Set(initialFavourites ?? [])
+  )
 
   const toggleFavourite = useCallback((toolPath: string) => {
     setFavourites((prev) => {
@@ -37,8 +31,6 @@ export function FavouritesProvider({ children }: { children: ReactNode }) {
     (toolPath: string) => favourites.has(toolPath),
     [favourites]
   )
-
-  if (!loaded) return null
 
   return (
     <FavouritesContext.Provider value={{ favourites, toggleFavourite, isFavourite }}>

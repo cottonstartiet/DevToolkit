@@ -7,6 +7,25 @@
     <title>DevToolkit</title>
   </head>
   <body>
+    <div id="splash" style="position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:9999">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="96" height="96" style="filter:drop-shadow(0 0 24px rgba(99,102,241,0.4))">
+        <defs>
+          <linearGradient id="bg" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#a5b4fc"/>
+            <stop offset="50%" stop-color="#6366f1"/>
+            <stop offset="100%" stop-color="#312e81"/>
+          </linearGradient>
+        </defs>
+        <rect width="512" height="512" rx="108" fill="url(#bg)"/>
+        <polyline points="190,155 95,256 190,357" fill="none" stroke="white" stroke-width="40" stroke-linecap="round" stroke-linejoin="round"/>
+        <line x1="295" y1="138" x2="217" y2="374" stroke="white" stroke-width="38" stroke-linecap="round" opacity="0.85"/>
+        <polyline points="322,155 417,256 322,357" fill="none" stroke="white" stroke-width="40" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <style>
+      #splash { background: #0a0a0a; transition: opacity 0.3s ease; }
+      @media (prefers-color-scheme: light) { #splash { background: #ffffff; } }
+    </style>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

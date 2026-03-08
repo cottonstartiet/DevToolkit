@@ -1,8 +1,11 @@
-import { app, BrowserWindow, ipcMain } from 'electron'
+import { app, BrowserWindow, ipcMain, nativeTheme } from 'electron'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 import { initDatabase, getSetting, setSetting, getAllSettings, getFavourites, addFavourite, removeFavourite, closeDatabase } from './database'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
+
+// Disable unnecessary Chromium features for faster startup
+app.commandLine.appendSwitch('disable-features', 'TranslateUI,SpareRendererForSitePerProcess')
 
 // The built directory structure
 //
@@ -25,7 +28,10 @@ process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL ? path.join(process.env.APP_ROOT, 
 let win: BrowserWindow | null
 
 function createWindow() {
+  const bgColor = nativeTheme.shouldUseDarkColors ? '#0a0a0a' : '#ffffff'
   win = new BrowserWindow({
+    show: false,
+    backgroundColor: bgColor,
     width: 1200,
     height: 800,
     minWidth: 900,
@@ -37,14 +43,13 @@ function createWindow() {
     },
   })
 
-  win.webContents.on('did-finish-load', () => {
-    win?.webContents.send('main-process-message', (new Date).toLocaleString())
+  win.once('ready-to-show', () => {
+    win?.show()
   })
 
   if (VITE_DEV_SERVER_URL) {
     win.loadURL(VITE_DEV_SERVER_URL)
   } else {
-    // win.loadFile('dist/index.html')
     win.loadFile(path.join(RENDERER_DIST, 'index.html'))
   }
 }
@@ -68,6 +73,9 @@ app.on('activate', () => {
 })
 
 app.whenReady().then(() => {
+  // Create window first so it can start loading HTML while DB initializes
+  createWindow()
+
   initDatabase()
 
   ipcMain.handle('settings:get', (_event, key: string) => getSetting(key))
@@ -78,7 +86,10 @@ app.whenReady().then(() => {
   ipcMain.handle('favourites:add', (_event, toolPath: string) => addFavourite(toolPath))
   ipcMain.handle('favourites:remove', (_event, toolPath: string) => removeFavourite(toolPath))
 
-  createWindow()
+  ipcMain.handle('app:bootstrap', () => ({
+    settings: getAllSettings(),
+    favourites: getFavourites(),
+  }))
 })
 
 app.on('will-quit', () => {

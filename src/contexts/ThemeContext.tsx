@@ -14,24 +14,27 @@ function getSystemTheme(): "dark" | "light" {
   return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
 }
 
-export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>("dark")
-  const [loaded, setLoaded] = useState(false)
+export function ThemeProvider({ children, initialTheme }: { children: ReactNode; initialTheme?: string }) {
+  const [theme, setThemeState] = useState<Theme>(() => {
+    // Use pre-fetched bootstrap data or fall back to localStorage cache
+    if (initialTheme && ["dark", "light", "system"].includes(initialTheme)) {
+      return initialTheme as Theme
+    }
+    return (localStorage.getItem("devtoolkit-theme") as Theme) || "dark"
+  })
 
   const resolvedTheme = theme === "system" ? getSystemTheme() : theme
 
-  // Load persisted theme from SQLite on mount
-  useEffect(() => {
-    window.electronAPI.settings.get("theme").then((value) => {
-      if (value) setThemeState(value as Theme)
-      setLoaded(true)
-    })
-  }, [])
-
   const setTheme = (newTheme: Theme) => {
     setThemeState(newTheme)
+    localStorage.setItem("devtoolkit-theme", newTheme)
     window.electronAPI.settings.set("theme", newTheme)
   }
+
+  // Keep localStorage in sync when initialTheme is used
+  useEffect(() => {
+    localStorage.setItem("devtoolkit-theme", theme)
+  }, [theme])
 
   useEffect(() => {
     const root = document.documentElement
@@ -50,8 +53,6 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     mq.addEventListener("change", handler)
     return () => mq.removeEventListener("change", handler)
   }, [theme])
-
-  if (!loaded) return null
 
   return (
     <ThemeContext.Provider value={{ theme, setTheme, resolvedTheme }}>

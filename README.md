@@ -1,30 +1,58 @@
-# React + TypeScript + Vite
+# DevToolkit
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+[![CI Build](https://github.com/cottonstartiet/DevToolkit/actions/workflows/build.yml/badge.svg)](https://github.com/cottonstartiet/DevToolkit/actions/workflows/build.yml)
+[![Release](https://github.com/cottonstartiet/DevToolkit/actions/workflows/release.yml/badge.svg)](https://github.com/cottonstartiet/DevToolkit/actions/workflows/release.yml)
+[![GitHub Release](https://img.shields.io/github/v/release/cottonstartiet/DevToolkit)](https://github.com/cottonstartiet/DevToolkit/releases/latest)
 
-Currently, two official plugins are available:
+A fully offline desktop developer utility app. All tools run locally — no network access required.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Download
 
-## Expanding the ESLint configuration
+| Platform | Download |
+|----------|----------|
+| Windows  | [DevToolkit-Windows-Setup.exe](https://github.com/cottonstartiet/DevToolkit/releases/latest) |
+| macOS    | [DevToolkit-Mac-Installer.dmg](https://github.com/cottonstartiet/DevToolkit/releases/latest) |
+| Linux    | [DevToolkit-Linux.AppImage](https://github.com/cottonstartiet/DevToolkit/releases/latest) |
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## Tools (21)
 
-- Configure the top-level `parserOptions` property like this:
+| Tool | Description |
+|------|-------------|
+| GUID / UUID Generator | Generate GUIDs and UUIDs v4 instantly |
+| JSON Formatter | Format, minify, and validate JSON |
+| JSON Compare | Compare two JSON objects side by side |
+| YAML ↔ JSON Converter | Convert between YAML and JSON formats |
+| XML ↔ JSON Converter | Convert between XML and JSON formats |
+| Base64 Encoder/Decoder | Encode and decode Base64 strings |
+| Markdown to PDF | Convert Markdown to downloadable PDF |
+| JWT Decoder | Decode and inspect JWT header, payload, and claims |
+| URL Encoder/Decoder | Encode and decode URL components |
+| Regex Tester | Write regex, test against input, see matches live |
+| Cron Expression Parser | Describe cron schedules in plain English |
+| Number Base Converter | Convert between Decimal, Hex, Octal, and Binary |
+| Color Converter | Convert between HEX, RGB, and HSL with visual picker |
+| String Case Converter | Convert between camelCase, snake_case, PascalCase, etc. |
+| Text Diff | Compare two text blocks and highlight differences |
+| Character / Word Counter | Count characters, words, lines, sentences |
+| Slug Generator | Convert text into URL-friendly slugs |
+| Hash Generator | Generate MD5, SHA-1, SHA-256, and SHA-512 hashes |
+| Unix Timestamp Converter | Convert between Unix timestamps and dates |
+| HTTP Status Code Reference | Searchable list of HTTP status codes |
+| CIDR / Subnet Calculator | Calculate network ranges and host counts |
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
+## Development
+
+```bash
+npm install        # Install dependencies
+npm run dev        # Start dev server with hot reload
+npm run lint       # Lint with zero warnings policy
+npm run build      # TypeScript check → Vite build → electron-builder package
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+## Tech Stack
+
+Electron · React · TypeScript · Tailwind CSS v4 · SQLite
+
+## License
+
+© Aseem Gaurav
