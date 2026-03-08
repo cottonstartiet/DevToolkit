@@ -2,6 +2,7 @@ import { app, BrowserWindow, ipcMain, nativeTheme } from 'electron'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 import { initDatabase, getSetting, setSetting, getAllSettings, getFavourites, addFavourite, removeFavourite, closeDatabase } from './database'
+import { initUpdater, installUpdate, checkForUpdates } from './updater'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 // Disable unnecessary Chromium features for faster startup
@@ -90,6 +91,11 @@ app.whenReady().then(() => {
     settings: getAllSettings(),
     favourites: getFavourites(),
   }))
+
+  ipcMain.on('updater:install', () => installUpdate())
+  ipcMain.handle('updater:check', () => checkForUpdates())
+
+  initUpdater(win!, !!VITE_DEV_SERVER_URL)
 })
 
 app.on('will-quit', () => {

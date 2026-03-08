@@ -86,3 +86,12 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-muted-foreground);
 }
+
+@keyframes update-toast-enter {
+  from { opacity: 0; transform: translateY(1rem); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.update-toast-enter {
+  animation: update-toast-enter 0.3s ease-out;
+}

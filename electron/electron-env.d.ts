@@ -36,5 +36,15 @@ interface Window {
       remove: (toolPath: string) => Promise<void>
     }
     bootstrap: () => Promise<{ settings: Record<string, string>; favourites: string[] }>
+    updater: {
+      onChecking: (callback: () => void) => () => void
+      onAvailable: (callback: (_event: unknown, info: { version: string; releaseDate: string }) => void) => () => void
+      onNotAvailable: (callback: () => void) => () => void
+      onDownloadProgress: (callback: (_event: unknown, progress: { percent: number; transferred: number; total: number }) => void) => () => void
+      onDownloaded: (callback: (_event: unknown, info: { version: string; releaseDate: string }) => void) => () => void
+      onError: (callback: (_event: unknown, message: string) => void) => () => void
+      install: () => void
+      check: () => Promise<void>
+    }
   }
 }

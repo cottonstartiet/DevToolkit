@@ -14,7 +14,8 @@
   "icon": "build/icon",
   "mac": {
     "target": [
-      "dmg"
+      "dmg",
+      "zip"
     ],
     "artifactName": "${productName}-Mac-${version}-Installer.${ext}"
   },

@@ -24,6 +24,8 @@
     "cron-parser": "^5.5.0",
     "cronstrue": "^3.13.0",
     "diff": "^8.0.3",
+    "electron-log": "^5.4.3",
+    "electron-updater": "^6.8.3",
     "fast-xml-parser": "^5.4.2",
     "js-md5": "^0.8.3",
     "js-yaml": "^4.1.1",
