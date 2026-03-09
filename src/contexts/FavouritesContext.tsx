@@ -40,6 +40,7 @@ export function FavouritesProvider({ children, initialFavourites }: { children: 
   )
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useFavourites() {
   const ctx = useContext(FavouritesContext)
   if (!ctx) throw new Error("useFavourites must be used within FavouritesProvider")
