@@ -10,17 +10,7 @@ permissions:
 
 jobs:
   release:
-    strategy:
-      matrix:
-        include:
-          - os: windows-latest
-            artifact: windows
-          - os: macos-latest
-            artifact: mac
-          - os: ubuntu-latest
-            artifact: linux
-
-    runs-on: ${{ matrix.os }}
+    runs-on: windows-latest
 
     steps:
       - uses: actions/checkout@v4

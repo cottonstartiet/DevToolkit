@@ -8,17 +8,7 @@ on:
 
 jobs:
   build:
-    strategy:
-      matrix:
-        include:
-          - os: windows-latest
-            artifact: DevToolkit-Windows
-          - os: macos-latest
-            artifact: DevToolkit-Mac
-          - os: ubuntu-latest
-            artifact: DevToolkit-Linux
-
-    runs-on: ${{ matrix.os }}
+    runs-on: windows-latest
 
     steps:
       - uses: actions/checkout@v4
@@ -45,9 +35,7 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.artifact }}
+          name: DevToolkit-Windows
           path: |
             release/**/*.exe
-            release/**/*.dmg
-            release/**/*.AppImage
           if-no-files-found: ignore
