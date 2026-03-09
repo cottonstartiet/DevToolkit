@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react"
+import { invoke } from "@tauri-apps/api/core"
 
 type Theme = "dark" | "light" | "system"
 
@@ -16,7 +17,6 @@ function getSystemTheme(): "dark" | "light" {
 
 export function ThemeProvider({ children, initialTheme }: { children: ReactNode; initialTheme?: string }) {
   const [theme, setThemeState] = useState<Theme>(() => {
-    // Use pre-fetched bootstrap data or fall back to localStorage cache
     if (initialTheme && ["dark", "light", "system"].includes(initialTheme)) {
       return initialTheme as Theme
     }
@@ -28,10 +28,9 @@ export function ThemeProvider({ children, initialTheme }: { children: ReactNode;
   const setTheme = (newTheme: Theme) => {
     setThemeState(newTheme)
     localStorage.setItem("devtoolkit-theme", newTheme)
-    window.electronAPI.settings.set("theme", newTheme)
+    invoke("set_setting", { key: "theme", value: newTheme })
   }
 
-  // Keep localStorage in sync when initialTheme is used
   useEffect(() => {
     localStorage.setItem("devtoolkit-theme", theme)
   }, [theme])

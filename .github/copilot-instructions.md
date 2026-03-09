@@ -2,22 +2,23 @@
 
 ## Overview
 
-DevToolkit is a fully offline desktop developer utility app built with Electron + React + TypeScript + Tailwind CSS v4. It provides standalone tool pages (UUID generator, JSON formatter, JSON compare, Base64 encoder/decoder, Markdown-to-PDF) accessible via a sidebar navigation. The app requires no network access — all functionality runs locally on the user's machine.
+DevToolkit is a fully offline desktop developer utility app built with Tauri + React + TypeScript + Tailwind CSS v4. It provides standalone tool pages (UUID generator, JSON formatter, JSON compare, Base64 encoder/decoder, Markdown-to-PDF) accessible via a sidebar navigation. The app requires no network access — all functionality runs locally on the user's machine.
 
 ## Commands
 
-- `npm run dev` — Start Vite dev server with Electron (hot reload)
-- `npm run build` — TypeScript check → Vite build → electron-builder package
+- `npm run dev` — Start Vite dev server with Tauri (hot reload)
+- `npm run build` — TypeScript check → Vite build → Tauri package
 - `npm run lint` — ESLint with zero warnings policy (`--max-warnings 0`)
 
 No test framework is configured.
 
 ## Architecture
 
-**Two-process Electron app:**
-- **Main process** (`electron/main.ts`) — Creates the BrowserWindow; loads the Vite dev server URL in dev or the built `dist/index.html` in production.
-- **Preload** (`electron/preload.ts`) — Exposes a safe `ipcRenderer` subset via `contextBridge`. Extend IPC here when adding native capabilities.
-- **Renderer** (`src/`) — React SPA using `HashRouter` (required for Electron's `file://` protocol).
+**Tauri app (two-process model):**
+- **Backend** (`src/tauri/lib.rs`) — Rust backend providing SQLite storage, settings management, and favourites via Tauri commands.
+- **Frontend** (`src/`) — React SPA using `HashRouter`.
+
+The Tauri configuration (`tauri.conf.json`), Cargo manifest (`Cargo.toml`), and build script (`build.rs`) live at the project root. The Rust source files live in `src/tauri/`.
 
 **Routing:** Each tool is a page component in `src/pages/` with a route in `src/App.tsx`. The sidebar tool list in `src/components/layout/Sidebar.tsx` and the home page grid in `src/pages/HomePage.tsx` each maintain their own tool array — keep both in sync when adding tools.
 
@@ -25,7 +26,7 @@ No test framework is configured.
 
 ## Storage
 
-The app uses SQLite for local persistent storage via the Electron main process. Never add cloud storage, remote APIs, or network-dependent features — this is a strictly offline application. All data must remain on the user's local filesystem.
+The app uses SQLite for local persistent storage via the Tauri backend (Rust). Never add cloud storage, remote APIs, or network-dependent features — this is a strictly offline application. All data must remain on the user's local filesystem.
 
 ## Conventions
 

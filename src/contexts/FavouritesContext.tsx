@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useCallback, type ReactNode } from "react"
+import { invoke } from "@tauri-apps/api/core"
 
 interface FavouritesContextType {
   favourites: Set<string>
@@ -18,10 +19,10 @@ export function FavouritesProvider({ children, initialFavourites }: { children: 
       const next = new Set(prev)
       if (next.has(toolPath)) {
         next.delete(toolPath)
-        window.electronAPI.favourites.remove(toolPath)
+        invoke("remove_favourite", { toolPath })
       } else {
         next.add(toolPath)
-        window.electronAPI.favourites.add(toolPath)
+        invoke("add_favourite", { toolPath })
       }
       return next
     })

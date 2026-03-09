@@ -46,12 +46,12 @@ A fully offline desktop developer utility app. All tools run locally — no netw
 npm install        # Install dependencies
 npm run dev        # Start dev server with hot reload
 npm run lint       # Lint with zero warnings policy
-npm run build      # TypeScript check → Vite build → electron-builder package
+npm run build      # TypeScript check → Vite build → Tauri package
 ```
 
 ## Tech Stack
 
-Electron · React · TypeScript · Tailwind CSS v4 · SQLite
+Tauri · React · TypeScript · Tailwind CSS v4 · SQLite
 
 ## License
 

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useCallback } from 'react'
 
 export type UpdateStatus = 'idle' | 'checking' | 'downloading' | 'ready' | 'error'
 
@@ -11,7 +11,7 @@ export interface UpdateState {
 }
 
 export function useAutoUpdater() {
-  const [state, setState] = useState<UpdateState>({
+  const [state] = useState<UpdateState>({
     status: 'idle',
     version: null,
     percent: 0,
@@ -19,54 +19,16 @@ export function useAutoUpdater() {
     dismissed: false,
   })
 
-  useEffect(() => {
-    const api = window.electronAPI?.updater
-    if (!api) return
-
-    const unsubChecking = api.onChecking(() => {
-      setState((prev) => ({ ...prev, status: 'checking', dismissed: false }))
-    })
-
-    const unsubAvailable = api.onAvailable((_event, info) => {
-      setState((prev) => ({ ...prev, status: 'downloading', version: info.version, percent: 0 }))
-    })
-
-    const unsubNotAvailable = api.onNotAvailable(() => {
-      setState((prev) => ({ ...prev, status: 'idle' }))
-    })
-
-    const unsubProgress = api.onDownloadProgress((_event, progress) => {
-      setState((prev) => ({ ...prev, status: 'downloading', percent: progress.percent }))
-    })
-
-    const unsubDownloaded = api.onDownloaded((_event, info) => {
-      setState((prev) => ({ ...prev, status: 'ready', version: info.version, percent: 100 }))
-    })
-
-    const unsubError = api.onError((_event, message) => {
-      setState((prev) => ({ ...prev, status: 'error', errorMessage: message }))
-    })
-
-    return () => {
-      unsubChecking()
-      unsubAvailable()
-      unsubNotAvailable()
-      unsubProgress()
-      unsubDownloaded()
-      unsubError()
-    }
-  }, [])
-
   const installUpdate = useCallback(() => {
-    window.electronAPI?.updater?.install()
+    // Tauri updater can be integrated via tauri-plugin-updater in the future
   }, [])
 
   const dismiss = useCallback(() => {
-    setState((prev) => ({ ...prev, dismissed: true }))
+    // no-op
   }, [])
 
   const checkForUpdates = useCallback(() => {
-    window.electronAPI?.updater?.check()
+    // no-op
   }, [])
 
   return { ...state, installUpdate, dismiss, checkForUpdates }

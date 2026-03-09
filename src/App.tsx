@@ -1,5 +1,5 @@
 import { lazy, Suspense } from "react"
-import { HashRouter, Routes, Route } from "react-router-dom"
+import { BrowserRouter, Routes, Route } from "react-router-dom"
 import { AppLayout } from "./components/layout/AppLayout"
 
 const HomePage = lazy(() => import("./pages/HomePage").then(m => ({ default: m.HomePage })))
@@ -27,7 +27,7 @@ const CidrCalculatorPage = lazy(() => import("./pages/CidrCalculatorPage").then(
 
 function App() {
   return (
-    <HashRouter>
+    <BrowserRouter>
       <Routes>
         <Route element={<AppLayout />}>
           <Route path="/" element={<Suspense><HomePage /></Suspense>} />
@@ -54,7 +54,7 @@ function App() {
           <Route path="/cidr-calculator" element={<Suspense><CidrCalculatorPage /></Suspense>} />
         </Route>
       </Routes>
-    </HashRouter>
+    </BrowserRouter>
   )
 }
 

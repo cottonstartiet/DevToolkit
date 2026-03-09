@@ -3,6 +3,6 @@
     "name": "DevToolkit",
     "version": "0.8.0",
     "description": "A collection of offline developer tools in a single application.",
-    "builtWith": "Electron, React, TypeScript & Tailwind CSS"
+    "builtWith": "Tauri, React, TypeScript & Tailwind CSS"
   }
 }
