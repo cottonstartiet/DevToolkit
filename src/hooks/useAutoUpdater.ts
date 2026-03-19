@@ -1,4 +1,6 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
+import { check } from '@tauri-apps/plugin-updater'
+import { relaunch } from '@tauri-apps/plugin-process'
 
 export type UpdateStatus = 'idle' | 'checking' | 'downloading' | 'ready' | 'error'
 
@@ -11,7 +13,7 @@ export interface UpdateState {
 }
 
 export function useAutoUpdater() {
-  const [state] = useState<UpdateState>({
+  const [state, setState] = useState<UpdateState>({
     status: 'idle',
     version: null,
     percent: 0,
@@ -19,17 +21,60 @@ export function useAutoUpdater() {
     dismissed: false,
   })
 
-  const installUpdate = useCallback(() => {
-    // Tauri updater can be integrated via tauri-plugin-updater in the future
+  const checkForUpdates = useCallback(async () => {
+    setState(s => ({ ...s, status: 'checking', errorMessage: null }))
+    try {
+      const update = await check()
+      if (!update) {
+        setState(s => ({ ...s, status: 'idle' }))
+        return
+      }
+
+      setState(s => ({
+        ...s,
+        status: 'downloading',
+        version: update.version,
+        percent: 0,
+      }))
+
+      let downloaded = 0
+      let total = 0
+
+      await update.downloadAndInstall((event) => {
+        if (event.event === 'Started' && event.data.contentLength) {
+          total = event.data.contentLength
+        } else if (event.event === 'Progress') {
+          downloaded += event.data.chunkLength
+          if (total > 0) {
+            setState(s => ({
+              ...s,
+              percent: Math.round((downloaded / total) * 100),
+            }))
+          }
+        } else if (event.event === 'Finished') {
+          setState(s => ({ ...s, status: 'ready', percent: 100 }))
+        }
+      })
+    } catch (err) {
+      setState(s => ({
+        ...s,
+        status: 'error',
+        errorMessage: err instanceof Error ? err.message : String(err),
+      }))
+    }
+  }, [])
+
+  const installUpdate = useCallback(async () => {
+    await relaunch()
   }, [])
 
   const dismiss = useCallback(() => {
-    // no-op
+    setState(s => ({ ...s, dismissed: true }))
   }, [])
 
-  const checkForUpdates = useCallback(() => {
-    // no-op
-  }, [])
+  useEffect(() => {
+    checkForUpdates()
+  }, [checkForUpdates])
 
   return { ...state, installUpdate, dismiss, checkForUpdates }
 }

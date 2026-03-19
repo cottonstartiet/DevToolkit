@@ -131,12 +131,18 @@ const updatedCargoLock = cargoLock.replace(
 )
 writeText("Cargo.lock", updatedCargoLock)
 
+// 6. src/applicationConfig.json
+console.log("Updating src/applicationConfig.json …")
+const appConfig = readJson("src/applicationConfig.json")
+appConfig.aboutInfo.version = newVersion
+writeJson("src/applicationConfig.json", appConfig)
+
 // ── Git commit, tag, and push ────────────────────────────────────────
 
 const tag = `v${newVersion}`
 
 console.log("\nCommitting version bump …")
-run("git add package.json package-lock.json tauri.conf.json Cargo.toml Cargo.lock")
+run("git add package.json package-lock.json tauri.conf.json Cargo.toml Cargo.lock src/applicationConfig.json")
 run(`git commit -m "chore: bump version to ${newVersion}"`)
 
 console.log(`\nTagging ${tag} …`)
