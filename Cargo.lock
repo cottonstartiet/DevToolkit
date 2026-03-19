@@ -515,7 +515,7 @@ dependencies = [
 
 [[package]]
 name = "dev-toolkit"
-version = "0.8.0"
+version = "0.8.5"
 dependencies = [
  "dirs 5.0.1",
  "rusqlite",
