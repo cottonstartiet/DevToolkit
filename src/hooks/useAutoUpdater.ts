@@ -56,11 +56,21 @@ export function useAutoUpdater() {
         }
       })
     } catch (err) {
-      setState(s => ({
-        ...s,
-        status: 'error',
-        errorMessage: err instanceof Error ? err.message : String(err),
-      }))
+      const message = err instanceof Error ? err.message : String(err)
+      const isNetworkError =
+        message.includes('fetch') ||
+        message.includes('network') ||
+        message.includes('Could not fetch') ||
+        message.includes('connect') ||
+        message.includes('timeout') ||
+        message.includes('404')
+
+      if (isNetworkError) {
+        // Silently ignore network/endpoint errors — offline-first app
+        setState(s => ({ ...s, status: 'idle' }))
+      } else {
+        setState(s => ({ ...s, status: 'error', errorMessage: message }))
+      }
     }
   }, [])
 
