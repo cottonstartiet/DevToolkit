@@ -9,6 +9,7 @@
     "github": "https://github.com/cottonstartiet/DevToolkit"
   },
   "scripts": {
+    "tauri": "tauri",
     "dev": "tauri dev",
     "dev:fe": "vite",
     "build": "tauri build",
