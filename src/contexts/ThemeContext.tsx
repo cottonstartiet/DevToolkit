@@ -20,7 +20,7 @@ export function ThemeProvider({ children, initialTheme }: { children: ReactNode;
     if (initialTheme && ["dark", "light", "system"].includes(initialTheme)) {
       return initialTheme as Theme
     }
-    return (localStorage.getItem("devtoolkit-theme") as Theme) || "dark"
+    return (localStorage.getItem("devtoolkit-theme") as Theme) || "system"
   })
 
   const resolvedTheme = theme === "system" ? getSystemTheme() : theme
