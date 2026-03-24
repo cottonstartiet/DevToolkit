@@ -1,7 +1,7 @@
 {
   "aboutInfo": {
     "name": "DevToolkit",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "A collection of offline developer tools in a single application.",
     "builtWith": "Tauri, React, TypeScript & Tailwind CSS"
   }
