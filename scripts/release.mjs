@@ -8,10 +8,10 @@
  * release workflow.
  *
  * Usage:
- *   node scripts/release.mjs <version>
- *   npm run release -- 0.9.0
- *
- * The version must be valid semver (e.g. 1.2.3) without a leading "v".
+ *   npm run release -- patch    # 0.1.0 → 0.1.1
+ *   npm run release -- minor    # 0.1.0 → 0.2.0
+ *   npm run release -- major    # 0.1.0 → 1.0.0
+ *   npm run release -- 2.0.0    # explicit version
  */
 
 import { readFileSync, writeFileSync } from "node:fs"
@@ -44,25 +44,44 @@ function writeText(relPath, content) {
   writeFileSync(resolve(ROOT, relPath), content)
 }
 
-// ── Validation ───────────────────────────────────────────────────────
+// ── Resolve version ──────────────────────────────────────────────────
 
 const SEMVER_RE = /^\d+\.\d+\.\d+$/
+const BUMP_TYPES = ["patch", "minor", "major"]
 
-const newVersion = process.argv[2]
+function bumpVersion(current, type) {
+  const [major, minor, patch] = current.split(".").map(Number)
+  switch (type) {
+    case "major":
+      return `${major + 1}.0.0`
+    case "minor":
+      return `${major}.${minor + 1}.0`
+    case "patch":
+      return `${major}.${minor}.${patch + 1}`
+  }
+}
 
-if (!newVersion) {
+const arg = process.argv[2]
+
+if (!arg) {
   const pkg = readJson("package.json")
   console.error(
-    `\nUsage:  node scripts/release.mjs <version>\n` +
-      `        npm run release -- <version>\n\n` +
+    `\nUsage:  npm run release -- <patch|minor|major|x.y.z>\n\n` +
       `Current version: ${pkg.version}\n`
   )
   process.exit(1)
 }
 
-if (!SEMVER_RE.test(newVersion)) {
+let newVersion
+
+if (BUMP_TYPES.includes(arg)) {
+  const pkg = readJson("package.json")
+  newVersion = bumpVersion(pkg.version, arg)
+} else if (SEMVER_RE.test(arg)) {
+  newVersion = arg
+} else {
   console.error(
-    `\nError: "${newVersion}" is not valid semver (expected x.y.z).\n`
+    `\nError: "${arg}" is not a valid bump type (patch, minor, major) or semver version (x.y.z).\n`
   )
   process.exit(1)
 }
