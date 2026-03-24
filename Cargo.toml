@@ -1,6 +1,6 @@
 [package]
 name = "dev-toolkit"
-version = "0.1.2"
+version = "0.1.3"
 description = "A collection of offline developer tools in a single application."
 authors = ["Aseem Gaurav"]
 edition = "2021"
